@@ -1,0 +1,51 @@
+parameters:
+- name: applicationVersion
+- name: artifactName
+  default: 'NDDD'
+
+jobs:
+ - job: 'Build'
+   variables:
+      BuildParameters: -p:Version=${{ parameters.applicationVersion }} -p:FileVersion=$(Build.BuildNumber) -p:NdddRuntime=win-x64 --no-self-contained
+      DotNetVersion: 10.0.x
+   displayName: 'Build'
+   steps:
+      - task: UseDotNet@2
+        displayName: 'Set .Net version'
+        inputs:
+          version: $(DotNetVersion)
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Restoring NuGet Packages'
+        inputs:
+          command: 'restore'
+          restoreArguments : '-r win-x64'
+
+      - task: DotNetCoreCLI@2
+        displayName: '.Net Core Build'
+        inputs:
+          command: 'custom'
+          custom: 'build'
+          arguments: --no-incremental --configuration Release --no-restore $(BuildParameters)
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Packing artifacts'
+        inputs:
+          command: 'publish'
+          configuration: Release
+          nobuild: True 
+          publishWebProjects: True
+          arguments: -r win-x64 --output $(Build.ArtifactStagingDirectory) $(BuildParameters)
+          zipAfterPublish: True
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publishing artifacts'
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: ${{ parameters.artifactName }}-$(Build.BuildNumber)
+          publishLocation: 'Container'
+
+      - task: CmdLine@2
+        displayName: 'Reset local changes'
+        inputs:
+          script: 'git reset --hard'

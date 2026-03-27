@@ -1,0 +1,20 @@
+<Project>
+	<PropertyGroup>
+	  <Authors>Nikola Dragićević</Authors>
+		<Product>NDDD</Product>
+		<Copyright>Copyright © 2023-, Nikola Dragićević, Belgrade, Serbia</Copyright>
+		<RepositoryUrl>https://github.com/typhoon41/nddd</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<RuntimeIdentifier>$(NdddRuntime)</RuntimeIdentifier>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+	</PropertyGroup>
+</Project>

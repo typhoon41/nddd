@@ -1,0 +1,16 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  applicationVersion: 0.1
+
+name: $(applicationVersion).$(Rev:r)
+
+stages:
+- stage: 'Build'
+  displayName: 'Build'
+  jobs:
+  - template: 'Templates/build.yaml'
