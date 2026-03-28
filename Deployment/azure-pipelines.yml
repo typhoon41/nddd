@@ -52,4 +52,4 @@ stages:
           - task: CmdLine@2
             displayName: 'Push NuGet Package'
             inputs:
-              script: 'dotnet nuget push "$(System.ArtifactsDirectory)/**/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org" --skip-duplicate --no-symbols'
+              script: 'dotnet nuget push "$(System.ArtifactsDirectory)/**/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org/v3/index.json" --skip-duplicate --no-symbols'

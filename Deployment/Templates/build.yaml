@@ -38,7 +38,7 @@ jobs:
           packagesToPack: '**/*.csproj'
           configuration: Release
           versioningScheme: 'byEnvVar'
-          versionEnvVar: 'BUILD_BUILDNUMBER'
+          versionEnvVar: 'applicationVersion'
 
       - task: PublishBuildArtifacts@1
         displayName: 'Publishing artifacts'
