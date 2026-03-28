@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  applicationVersion: 0.1
+  applicationVersion: 0.1.1
 
 name: $(applicationVersion).$(Rev:r)
 
@@ -36,7 +36,8 @@ stages:
         onTimeout: reject
   - deployment: Publish
     environment: Publish to NuGet
-    condition: succeeded(WaitForValidation)
+    dependsOn: WaitForValidation
+    condition: succeeded('WaitForValidation')
     strategy:
       runOnce:
         deploy:
