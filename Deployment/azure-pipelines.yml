@@ -36,7 +36,7 @@ stages:
         onTimeout: reject
   - deployment: Publish
     environment: Publish to NuGet
-    condition: succeeded('WaitForValidation')
+    condition: succeeded(WaitForValidation)
     strategy:
       runOnce:
         deploy:
