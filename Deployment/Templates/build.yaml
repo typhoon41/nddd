@@ -15,6 +15,9 @@ jobs:
         inputs:
           version: $(DotNetVersion)
 
+      - task: NuGetToolInstaller@1
+        displayName: 'Install NuGet Tool'
+
       - task: DotNetCoreCLI@2
         displayName: 'Restoring NuGet Packages'
         inputs:
@@ -29,14 +32,13 @@ jobs:
           arguments: --no-incremental --configuration Release --no-restore $(BuildParameters)
 
       - task: DotNetCoreCLI@2
-        displayName: 'Packing artifacts'
+        displayName: Pack the NuGet packages
         inputs:
-          command: 'publish'
+          command: 'pack'
+          packagesToPack: '**/*.csproj'
           configuration: Release
-          nobuild: True 
-          publishWebProjects: True
-          arguments: -r win-x64 --output $(Build.ArtifactStagingDirectory) $(BuildParameters)
-          zipAfterPublish: True
+          versioningScheme: 'byEnvVar'
+          versionEnvVar: 'BUILD_BUILDNUMBER'
 
       - task: PublishBuildArtifacts@1
         displayName: 'Publishing artifacts'
