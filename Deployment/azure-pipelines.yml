@@ -36,6 +36,8 @@ stages:
         onTimeout: reject
   - deployment: Publish
     environment: Publish to NuGet
+    variables:
+    - group: Deploy
     dependsOn: WaitForValidation
     condition: succeeded('WaitForValidation')
     strategy:
@@ -47,10 +49,7 @@ stages:
               buildType: 'current'
               downloadType: 'specific'
               downloadPath: '$(System.ArtifactsDirectory)'
-          - task: DotNetCoreCLI@2
+          - task: CmdLine@2
             displayName: 'Push NuGet Package'
             inputs:
-              command: 'push'
-              packagesToPush: '$(System.ArtifactsDirectory)/**/*.nupkg;!$(System.ArtifactsDirectory)/**/*.symbols.nupkg'
-              nuGetFeedType: 'external'
-              publishFeedCredentials: 'nuget_org'
+              script: 'dotnet nuget push $(System.ArtifactsDirectory)/**/*.nupkg;!$(System.ArtifactsDirectory)/**/*.symbols.nupkg -k $(NugetApiKey) -s "https://api.nuget.org"'
