@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  applicationVersion: 0.1.4
+  applicationVersion: 0.1.5
 
 name: $(applicationVersion).$(Rev:r)
 
@@ -52,4 +52,4 @@ stages:
           - task: CmdLine@2
             displayName: 'Push NuGet Package'
             inputs:
-              script: 'dotnet nuget push "$(System.ArtifactsDirectory)/**/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org/v3/index.json" --skip-duplicate --no-symbols'
+              script: 'dotnet nuget push "$(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org/v3/index.json" --skip-duplicate --no-symbols'
