@@ -58,4 +58,13 @@ stages:
           - task: CmdLine@2
             displayName: 'Push NuGet Package'
             inputs:
-              script: 'dotnet nuget push "$(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org/v3/index.json" --skip-duplicate --no-symbols -v detailed'
+              script: |
+                NUPKG=$(find "$(System.ArtifactsDirectory)" -name "*.nupkg" ! -name "*.symbols.nupkg" | head -1)
+                echo "Pushing: $NUPKG"
+                curl -s -o response.txt -w "HTTP_STATUS:%{http_code}" \
+                  -X PUT "https://www.nuget.org/api/v2/package/" \
+                  -H "X-NuGet-ApiKey: $(NugetApiKey)" \
+                  -F "package=@$NUPKG;type=application/octet-stream"
+                echo ""
+                echo "NuGet response body:"
+                cat response.txt
