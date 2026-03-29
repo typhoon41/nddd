@@ -40,6 +40,7 @@ stages:
     - group: Deploy
     dependsOn: WaitForValidation
     condition: succeeded('WaitForValidation')
+    download: none
     strategy:
       runOnce:
         deploy:
@@ -48,6 +49,7 @@ stages:
             inputs:
               buildType: 'current'
               downloadType: 'specific'
+              artifactName: 'NDDD-$(Build.BuildNumber)'
               downloadPath: '$(System.ArtifactsDirectory)'
           - task: CmdLine@2
             displayName: 'Push NuGet Package'
