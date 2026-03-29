@@ -2,6 +2,8 @@
 	<PropertyGroup>
 	  <Authors>Nikola Dragićević</Authors>
 		<Product>NDDD</Product>
+		<Description>Non-Dogmatic Domain-Driven Design building blocks for .NET — entities, value objects, domain events, and more.</Description>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<Copyright>Copyright © 2023-, Nikola Dragićević, Belgrade, Serbia</Copyright>
 		<RepositoryUrl>https://github.com/typhoon41/nddd</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -14,7 +16,7 @@
 		<AnalysisLevel>latest</AnalysisLevel>
 		<TargetFramework>net10.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
-		<RuntimeIdentifier>$(NdddRuntime)</RuntimeIdentifier>
+		<RuntimeIdentifier Condition="'$(NdddRuntime)' != ''">$(NdddRuntime)</RuntimeIdentifier>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 	</PropertyGroup>
 </Project>
