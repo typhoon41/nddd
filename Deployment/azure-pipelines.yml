@@ -40,11 +40,11 @@ stages:
     - group: Deploy
     dependsOn: WaitForValidation
     condition: succeeded('WaitForValidation')
-    download: none
     strategy:
       runOnce:
         deploy:
           steps:
+          - download: none
           - task: DownloadBuildArtifacts@1
             inputs:
               buildType: 'current'
@@ -52,6 +52,10 @@ stages:
               artifactName: 'NDDD-$(Build.BuildNumber)'
               downloadPath: '$(System.ArtifactsDirectory)'
           - task: CmdLine@2
+            displayName: 'List packages to push'
+            inputs:
+              script: 'find "$(System.ArtifactsDirectory)" -name "*.nupkg" && dotnet --version'
+          - task: CmdLine@2
             displayName: 'Push NuGet Package'
             inputs:
-              script: 'dotnet nuget push "$(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org/v3/index.json" --skip-duplicate --no-symbols'
+              script: 'dotnet nuget push "$(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org/v3/index.json" --skip-duplicate --no-symbols -v detailed'
