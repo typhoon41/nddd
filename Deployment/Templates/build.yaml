@@ -37,6 +37,7 @@ jobs:
           command: 'pack'
           packagesToPack: '**/*.csproj'
           configuration: Release
+          arguments: '/p:Version=${{ parameters.applicationVersion }}'
 
       - task: PublishBuildArtifacts@1
         displayName: 'Publishing artifacts'
