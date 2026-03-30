@@ -1,7 +1,7 @@
 <Project>
 	<PropertyGroup>
 	  <Authors>Nikola Dragićević</Authors>
-		<PackageId>Gmf.NDDD</PackageId>
+		<PackageId>Gmf.NDDDv2</PackageId>
 		<Product>NDDD</Product>
 		<Description>Non-Dogmatic Domain-Driven Design building blocks for .NET — entities, value objects, domain events, and more.</Description>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
