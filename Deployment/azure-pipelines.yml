@@ -45,13 +45,45 @@ stages:
         deploy:
           steps:
           - download: none
+          - task: UseDotNet@2
+            displayName: 'Set .Net version'
+            inputs:
+              version: 10.0.x
           - task: DownloadBuildArtifacts@1
             inputs:
               buildType: 'current'
               downloadType: 'specific'
               artifactName: 'NDDD-$(Build.BuildNumber)'
               downloadPath: '$(System.ArtifactsDirectory)'
-          - task: CmdLine@2
+          - task: PowerShell@2
             displayName: 'Push NuGet Package'
             inputs:
-              script: 'dotnet nuget push "$(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org/v3/index.json" --skip-duplicate --no-symbols'
+              targetType: 'inline'
+              script: |
+                $nupkgPath = (Get-ChildItem "$(System.ArtifactsDirectory)" -Recurse -Filter "*.nupkg" | Where-Object { $_.Name -notlike "*.symbols.nupkg" } | Select-Object -First 1).FullName
+                Write-Host "Package: $nupkgPath"
+
+                $multipart = New-Object System.Net.Http.MultipartFormDataContent
+                $stream = [System.IO.File]::OpenRead($nupkgPath)
+                $fileContent = New-Object System.Net.Http.StreamContent($stream)
+                $fileContent.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/octet-stream")
+                $multipart.Add($fileContent, "package", [System.IO.Path]::GetFileName($nupkgPath))
+
+                $client = New-Object System.Net.Http.HttpClient
+                $client.DefaultRequestHeaders.Add("X-NuGet-ApiKey", "$(NugetApiKey)")
+
+                $response = $client.PutAsync("https://www.nuget.org/api/v2/package/", $multipart).Result
+                $body = $response.Content.ReadAsStringAsync().Result
+                $stream.Close()
+
+                Write-Host "HTTP Status: $([int]$response.StatusCode) $($response.StatusCode)"
+                Write-Host "Response Body: $body"
+
+                if ($response.StatusCode -eq 201 -or $response.StatusCode -eq 202) {
+                  Write-Host "Package published successfully."
+                } elseif ($response.StatusCode -eq 409) {
+                  Write-Warning "Conflict: package version already exists on nuget.org."
+                } else {
+                  Write-Error "Push failed with HTTP $([int]$response.StatusCode): $body"
+                  exit 1
+                }
