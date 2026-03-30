@@ -55,35 +55,20 @@ stages:
               downloadType: 'specific'
               artifactName: 'NDDD-$(Build.BuildNumber)'
               downloadPath: '$(System.ArtifactsDirectory)'
-          - task: PowerShell@2
+          - task: CmdLine@2
+            displayName: 'Check if version already exists on NuGet'
+            inputs:
+              script: |
+                VERSION=$(unzip -p "$(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/Gmf.NDDD.$(applicationVersion).nupkg" "*.nuspec" 2>/dev/null | grep -oP '(?<=<version>)[^<]+' | head -1)
+                echo "Package version from nupkg: $VERSION"
+                HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://api.nuget.org/v3-flatcontainer/gmf.nddd/$VERSION/gmf.nddd.$VERSION.nupkg")
+                echo "NuGet flat container status for $VERSION: $HTTP"
+                if [ "$HTTP" = "200" ]; then
+                  echo "##[warning] Version $VERSION already exists on nuget.org"
+                else
+                  echo "Version $VERSION does not exist on nuget.org - proceeding to push"
+                fi
+          - task: CmdLine@2
             displayName: 'Push NuGet Package'
             inputs:
-              targetType: 'inline'
-              script: |
-                $nupkgPath = (Get-ChildItem "$(System.ArtifactsDirectory)" -Recurse -Filter "*.nupkg" | Where-Object { $_.Name -notlike "*.symbols.nupkg" } | Select-Object -First 1).FullName
-                Write-Host "Package: $nupkgPath"
-
-                $multipart = New-Object System.Net.Http.MultipartFormDataContent
-                $stream = [System.IO.File]::OpenRead($nupkgPath)
-                $fileContent = New-Object System.Net.Http.StreamContent($stream)
-                $fileContent.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/octet-stream")
-                $multipart.Add($fileContent, "package", [System.IO.Path]::GetFileName($nupkgPath))
-
-                $client = New-Object System.Net.Http.HttpClient
-                $client.DefaultRequestHeaders.Add("X-NuGet-ApiKey", "$(NugetApiKey)")
-
-                $response = $client.PutAsync("https://www.nuget.org/api/v2/package/", $multipart).Result
-                $body = $response.Content.ReadAsStringAsync().Result
-                $stream.Close()
-
-                Write-Host "HTTP Status: $([int]$response.StatusCode) $($response.StatusCode)"
-                Write-Host "Response Body: $body"
-
-                if ($response.StatusCode -eq 201 -or $response.StatusCode -eq 202) {
-                  Write-Host "Package published successfully."
-                } elseif ($response.StatusCode -eq 409) {
-                  Write-Warning "Conflict: package version already exists on nuget.org."
-                } else {
-                  Write-Error "Push failed with HTTP $([int]$response.StatusCode): $body"
-                  exit 1
-                }
+              script: 'dotnet nuget push "$(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org/v3/index.json" --skip-duplicate --no-symbols'
