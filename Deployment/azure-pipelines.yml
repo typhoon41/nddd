@@ -56,13 +56,9 @@ stages:
               artifactName: 'NDDD-$(Build.BuildNumber)'
               downloadPath: '$(System.ArtifactsDirectory)'
           - task: CmdLine@2
-            displayName: 'Check if version already exists on NuGet'
+            displayName: 'Push NuGet Package'
             inputs:
-              script: |
-                VERSION=$(unzip -p "$(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/Gmf.NDDD.$(applicationVersion).nupkg" "*.nuspec" 2>/dev/null | grep -oP '(?<=<version>)[^<]+' | head -1)
-                echo "Package version from nupkg: $VERSION"
-                HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://api.nuget.org/v3-flatcontainer/gmf.nddd/$VERSION/gmf.nddd.$VERSION.nupkg")
-                echo "NuGet flat container status for $VERSION: $HTTP"
+              script: 'dotnet nuget push $(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/*.nupkg --api-key $(NugetApiKey) --source https://api.nuget.org/v3/index.json
                 if [ "$HTTP" = "200" ]; then
                   echo "##[warning] Version $VERSION already exists on nuget.org"
                 else
