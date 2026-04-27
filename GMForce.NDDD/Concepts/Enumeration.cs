@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Gmf.NDDD.Concepts;
+namespace GMForce.NDDD.Concepts;
 public abstract class Enumeration<T>(T value, string displayName) : IComparable where T : IComparable
 {
     public T Value { get; } = value;

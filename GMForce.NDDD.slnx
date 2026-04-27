@@ -14,5 +14,5 @@
     <File Path="nuget.config" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="Gmf.NDDD/Gmf.NDDD.csproj" />
+  <Project Path="GMForce.NDDD/GMForce.NDDD.csproj" />
 </Solution>

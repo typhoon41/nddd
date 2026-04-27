@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
-using Gmf.NDDD.Contracts;
+using GMForce.NDDD.Contracts;
 
-namespace Gmf.NDDD.Persistance;
+namespace GMForce.NDDD.Persistance;
 public abstract record EntityDto
 {
     [NotMapped]

@@ -1,4 +1,4 @@
-﻿namespace Gmf.NDDD.Abstractions;
+﻿namespace GMForce.NDDD.Abstractions;
 
 public sealed record Period
 {

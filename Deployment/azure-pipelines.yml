@@ -5,7 +5,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  applicationVersion: 1.0.0
+  applicationVersion: 0.1.0
+  dotnetVersion: 10.0.x
 
 name: $(applicationVersion).$(Rev:r)
 
@@ -16,6 +17,7 @@ stages:
   - template: 'Templates/build.yaml'
     parameters:
       applicationVersion: $(applicationVersion)
+      dotnetVersion: $(dotnetVersion)
 
 - stage: NugetPublish
   displayName: Publish package to NuGet
@@ -48,22 +50,13 @@ stages:
           - task: UseDotNet@2
             displayName: 'Set .Net version'
             inputs:
-              version: 10.0.x
+              version: $(dotnetVersion)
           - task: DownloadBuildArtifacts@1
             inputs:
               buildType: 'current'
               downloadType: 'specific'
               artifactName: 'NDDD-$(Build.BuildNumber)'
               downloadPath: '$(System.ArtifactsDirectory)'
-          - task: CmdLine@2
-            displayName: 'Push NuGet Package'
-            inputs:
-              script: 'dotnet nuget push $(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/*.nupkg --api-key $(NugetApiKey) --source https://api.nuget.org/v3/index.json
-                if [ "$HTTP" = "200" ]; then
-                  echo "##[warning] Version $VERSION already exists on nuget.org"
-                else
-                  echo "Version $VERSION does not exist on nuget.org - proceeding to push"
-                fi
           - task: CmdLine@2
             displayName: 'Push NuGet Package'
             inputs:

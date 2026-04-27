@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Gmf.NDDD.Concepts;
+namespace GMForce.NDDD.Concepts;
 public abstract class ValueObject
 {
     protected abstract IEnumerable<object> GetAtomicValues();

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Gmf.NDDD.Concepts;
+namespace GMForce.NDDD.Concepts;
 public abstract class Entity<T>(T id) where T : struct
 {
     public T Id { get; } = id;

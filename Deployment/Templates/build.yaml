@@ -2,18 +2,19 @@ parameters:
 - name: applicationVersion
 - name: artifactName
   default: 'NDDD'
+- name: dotnetVersion
+  default: '10.0.x'
 
 jobs:
  - job: 'Build'
    variables:
       BuildParameters: -p:Version=${{ parameters.applicationVersion }} -p:FileVersion=$(Build.BuildNumber) -p:NdddRuntime=win-x64 --no-self-contained
-      DotNetVersion: 10.0.x
    displayName: 'Build'
    steps:
       - task: UseDotNet@2
         displayName: 'Set .Net version'
         inputs:
-          version: $(DotNetVersion)
+          version: ${{ parameters.dotnetVersion }}
 
       - task: NuGetToolInstaller@1
         displayName: 'Install NuGet Tool'

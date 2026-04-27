@@ -1,4 +1,4 @@
-﻿namespace Gmf.NDDD.Contracts;
+﻿namespace GMForce.NDDD.Contracts;
 public interface IDispatchEvents
 {
     Task Dispatch(IDomainEvent domainEvent);
