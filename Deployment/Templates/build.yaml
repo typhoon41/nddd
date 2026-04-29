@@ -23,7 +23,7 @@ jobs:
         displayName: 'Restoring NuGet Packages'
         inputs:
           command: 'restore'
-          restoreArguments : '-r win-x64'
+          restoreArguments: '-p:NdddRuntime=win-x64'
 
       - task: DotNetCoreCLI@2
         displayName: '.Net Core Build'

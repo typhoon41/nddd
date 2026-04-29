@@ -20,19 +20,20 @@ Follow every rule below without exception.
 
 ### Test method naming
 
-Descriptive camelCase — no underscores, no method-name or constructor prefixes:
+Descriptive PascalCase — no underscores, no method-name or constructor prefixes:
 
 ```csharp
 // correct
-whenEndExceedsMaxLengthThrows
-toStringReturnsEndValue
-missingSectionsLineThrows
-withValidRangeCreatesSection
+WhenEndExceedsMaxLengthThrows
+ToStringReturnsEndValue
+MissingSectionsLineThrows
+WithValidRangeCreatesSection
 
 // wrong
 Constructor_WhenEndExceedsMaxLength_ThrowsArgumentOutOfRangeException
 Parse_MissingSectionsLine_ThrowsFormatException
-ToString_ReturnsEndValue
+whenEndExceedsMaxLengthThrows
+toStringReturnsEndValue
 ```
 
 ---
@@ -43,7 +44,7 @@ Separate Arrange / Act / Assert with a **blank line only**. Never write `// Arra
 
 ```csharp
 [Test]
-public void returnsSuccessForValidOrder()
+public void ReturnsSuccessForValidOrder()
 {
     var order = new OrderBuilder().WithStatus(OrderStatus.Pending).Build();
 
@@ -57,7 +58,7 @@ Every test has exactly one Act line (or one `await`). When the Act is expected t
 
 ```csharp
 [Test]
-public void throwsWhenAmountIsNegative()
+public void ThrowsWhenAmountIsNegative()
 {
     var account = new BankAccount();
 
@@ -122,7 +123,7 @@ Use **only** for integration tests and output too complex to assert property-by-
 
 ```csharp
 [Test]
-public async Task returnsExpectedSerializedOrder()
+public async Task ReturnsExpectedSerializedOrder()
 {
     var order = new OrderBuilder().WithLines(3).Build();
 
@@ -155,7 +156,7 @@ internal sealed class OrdersEndpointFixture : WebApplicationFactory<Program>
     }
 
     [Test]
-    public async Task returnsOrderForExistingId()
+    public async Task ReturnsOrderForExistingId()
     {
         var response = await _client.GetAsync($"/orders/{Ids.Existing}");
 
@@ -224,7 +225,7 @@ Add builder methods only when a test actually needs them.
 [TestCase(Amounts.Zero)]
 [TestCase(Amounts.Negative)]
 [TestCase(Amounts.OverMaximum)]
-public void throwsForOutOfRangeAmount(decimal amount)
+public void ThrowsForOutOfRangeAmount(decimal amount)
 {
     var account = new BankAccount();
 
@@ -236,22 +237,32 @@ public void throwsForOutOfRangeAmount(decimal amount)
 
 ### `[TestCaseSource]` — when data is complex or needs a display name
 
+Source methods live in a **separate class** suffixed `Source` (`OrderSource.cs`), never as private methods in the fixture. Reference the source class via `typeof`:
+
 ```csharp
-[TestCaseSource(nameof(InvalidOrderCases))]
-public void rejectsInvalidOrder(Order order)
+[TestCaseSource(typeof(OrderSource), nameof(OrderSource.InvalidOrderCases))]
+public void RejectsInvalidOrder(Order order)
 {
     var result = _sut.Process(order);
 
     result.IsSuccess.Should().BeFalse();
 }
+```
 
-private static IEnumerable<TestCaseData> InvalidOrderCases()
+```csharp
+// OrderSource.cs
+internal static class OrderSource
 {
-    yield return new TestCaseData(Orders.Expired).SetName("expired");
-    yield return new TestCaseData(Orders.ZeroTotal).SetName("zeroTotal");
-    yield return new TestCaseData(Orders.MissingAddress).SetName("noShippingAddress");
+    public static IEnumerable<TestCaseData> InvalidOrderCases()
+    {
+        yield return new TestCaseData(Orders.Expired).SetName("expired");
+        yield return new TestCaseData(Orders.ZeroTotal).SetName("zeroTotal");
+        yield return new TestCaseData(Orders.MissingAddress).SetName("noShippingAddress");
+    }
 }
 ```
+
+If a source method requires helper types (e.g., a test-only `OrderEntity` subclass), declare those types as `internal sealed class` in the Source file — not as `file` types — so the fixture file can also reference them directly.
 
 When all Arrange comes from parameters there is no Arrange block — the Act line starts the body.
 
@@ -294,12 +305,14 @@ Shared pre-built domain objects reused across multiple fixture classes go in a `
 ## What NOT to do
 
 - Do not use underscores in test method names.
+- Do not use camelCase for test method names — PascalCase only.
 - Do not add `[TestFixture]` to classes whose names end with `Fixture`.
 - Do not write `// Arrange`, `// Act`, or `// Assert` comments.
 - Do not use `Assert.That` or any other `Assert.*` — FluentAssertions only.
 - Do not leave empty catch blocks.
 - Do not write separate `[Test]` methods for cases that differ only in input values — use `[TestCase]` or `[TestCaseSource]`. Always check before writing any new `[Test]`.
-- Do not create nested classes for builders or codebooks.
+- Do not create nested classes for builders, codebooks, or source data.
+- Do not declare `[TestCaseSource]` data as private methods inside the fixture — use a separate `*Source` class.
 - Do not re-declare `IDisposable` on a class that already inherits it — override `Dispose(bool)` instead.
 
 ---
@@ -319,11 +332,12 @@ Shared pre-built domain objects reused across multiple fixture classes go in a `
 
 - [ ] Scanned for duplication — no two `[Test]` methods with identical structure differing only in data
 - [ ] Every test follows AAA separated by blank lines — no AAA comments
-- [ ] Method names are descriptive camelCase — no underscores, no prefixes
+- [ ] Method names are descriptive PascalCase — no underscores, no camelCase, no prefixes
 - [ ] Test class is `internal sealed`, no `[TestFixture]`, `Fixture` suffix
 - [ ] All assertions use FluentAssertions — no `Assert.*`
 - [ ] Fakes created with FakeItEasy (`A.Fake<T>()`) in `[SetUp]`, fields initialized with `= null!`
 - [ ] Complex output verified with Verify.NUnit; `.verified.txt` committed
 - [ ] Integration tests override `Dispose(bool)` for cleanup
 - [ ] Magic literals replaced by codebook entries
-- [ ] Builders and codebooks are separate files, not nested classes
+- [ ] Builders, codebooks, and source classes are separate files, not nested classes
+- [ ] `[TestCaseSource]` data lives in a `*Source` class referenced via `typeof`

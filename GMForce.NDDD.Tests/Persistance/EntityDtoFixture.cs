@@ -3,7 +3,7 @@ namespace GMForce.NDDD.Tests.Persistance;
 internal sealed class EntityDtoFixture
 {
     [Test]
-    public void initiallyHasNoDomainEvents()
+    public void InitiallyHasNoDomainEvents()
     {
         var dto = new ConcreteEntityDto();
 
@@ -11,7 +11,7 @@ internal sealed class EntityDtoFixture
     }
 
     [Test]
-    public void addsDomainEventToCollection()
+    public void AddsDomainEventToCollection()
     {
         var dto = new ConcreteEntityDto();
         var @event = A.Fake<IDomainEvent>();
@@ -22,7 +22,7 @@ internal sealed class EntityDtoFixture
     }
 
     [Test]
-    public void addingMultipleEventsPreservesAll()
+    public void AddingMultipleEventsPreservesAll()
     {
         var dto = new ConcreteEntityDto();
         var first = A.Fake<IDomainEvent>();
@@ -35,7 +35,7 @@ internal sealed class EntityDtoFixture
     }
 
     [Test]
-    public void clearsDomainEvents()
+    public void ClearsDomainEvents()
     {
         var dto = new ConcreteEntityDto();
         dto.AddDomainEvent(A.Fake<IDomainEvent>());

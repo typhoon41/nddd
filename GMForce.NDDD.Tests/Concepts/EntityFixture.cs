@@ -3,7 +3,7 @@ namespace GMForce.NDDD.Tests.Concepts;
 internal sealed class EntityFixture
 {
     [Test]
-    public void equalWhenSameTypeAndId()
+    public void EqualWhenSameTypeAndId()
     {
         var a = new OrderEntity(EntityIds.First);
         var b = new OrderEntity(EntityIds.First);
@@ -11,24 +11,14 @@ internal sealed class EntityFixture
         a.Equals(b).Should().BeTrue();
     }
 
-    [TestCaseSource(nameof(UnequalCases))]
-    public void notEqualWhenTypeOrIdDiffers(Entity<int> entity, object? other)
+    [TestCaseSource(typeof(EntitySource), nameof(EntitySource.UnequalCases))]
+    public void NotEqualWhenTypeOrIdDiffers(Entity<int> entity, object? other)
     {
         entity.Equals(other).Should().BeFalse();
     }
 
-    private static IEnumerable<TestCaseData> UnequalCases()
-    {
-        yield return new TestCaseData(new OrderEntity(EntityIds.First), new OrderEntity(EntityIds.Second))
-            .SetName("differentId");
-        yield return new TestCaseData(new OrderEntity(EntityIds.First), new CustomerEntity(EntityIds.First))
-            .SetName("differentConcreteType");
-        yield return new TestCaseData(new OrderEntity(EntityIds.First), null)
-            .SetName("null");
-    }
-
     [Test]
-    public void hashCodeMatchesForEqualEntities()
+    public void HashCodeMatchesForEqualEntities()
     {
         var a = new OrderEntity(EntityIds.First);
         var b = new OrderEntity(EntityIds.First);
@@ -36,6 +26,3 @@ internal sealed class EntityFixture
         a.GetHashCode().Should().Be(b.GetHashCode());
     }
 }
-
-file sealed class OrderEntity(int id) : Entity<int>(id);
-file sealed class CustomerEntity(int id) : Entity<int>(id);

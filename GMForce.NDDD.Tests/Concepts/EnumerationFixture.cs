@@ -3,46 +3,33 @@ namespace GMForce.NDDD.Tests.Concepts;
 internal sealed class EnumerationFixture
 {
     [Test]
-    public void toStringReturnsDisplayName()
+    public void ToStringReturnsDisplayName()
     {
         Priority.Medium.ToString().Should().Be("Medium");
     }
 
-    [TestCaseSource(nameof(CompareToOrdering))]
-    public void compareToReflectsValueOrdering(Enumeration<int> left, Enumeration<int> right, int expectedSign)
+    [TestCaseSource(typeof(EnumerationSource), nameof(EnumerationSource.CompareToOrdering))]
+    public void CompareToReflectsValueOrdering(Enumeration<int> left, Enumeration<int> right, int expectedSign)
     {
         Math.Sign(left.CompareTo(right)).Should().Be(expectedSign);
     }
 
-    private static IEnumerable<TestCaseData> CompareToOrdering()
-    {
-        yield return new TestCaseData(Priority.Low, Priority.High, -1).SetName("lowerValueIsLess");
-        yield return new TestCaseData(Priority.Medium, Priority.Medium, 0).SetName("equalValueIsZero");
-        yield return new TestCaseData(Priority.High, Priority.Low, 1).SetName("higherValueIsGreater");
-    }
-
     [Test]
-    public void compareToThrowsForNull()
+    public void CompareToThrowsForNull()
     {
         Action act = () => Priority.Low.CompareTo(null);
 
         act.Should().Throw<ArgumentNullException>();
     }
 
-    [TestCaseSource(nameof(EqualityCases))]
-    public void equalityOperatorReflectsTypeAndValue(Enumeration<int> left, Enumeration<int> right, bool expected)
+    [TestCaseSource(typeof(EnumerationSource), nameof(EnumerationSource.EqualityCases))]
+    public void EqualityOperatorReflectsTypeAndValue(Enumeration<int> left, Enumeration<int> right, bool expected)
     {
         (left == right).Should().Be(expected);
     }
 
-    private static IEnumerable<TestCaseData> EqualityCases()
-    {
-        yield return new TestCaseData(Priority.Medium, Priority.Medium, true).SetName("sameValueIsEqual");
-        yield return new TestCaseData(Priority.Low, Priority.High, false).SetName("differentValueIsNotEqual");
-    }
-
     [Test]
-    public void notEqualToDifferentConcreteType()
+    public void NotEqualToDifferentConcreteType()
     {
         var priority = new Priority(2, "Medium");
         var urgency = new Urgency(2, "Medium");
@@ -51,13 +38,13 @@ internal sealed class EnumerationFixture
     }
 
     [Test]
-    public void inequalityOperatorIsNegationOfEquality()
+    public void InequalityOperatorIsNegationOfEquality()
     {
         (Priority.Low != Priority.High).Should().BeTrue();
     }
 
     [Test]
-    public void hashCodeMatchesForEqualInstances()
+    public void HashCodeMatchesForEqualInstances()
     {
         var a = new Priority(2, "Medium");
         var b = new Priority(2, "Medium");
@@ -65,12 +52,3 @@ internal sealed class EnumerationFixture
         a.GetHashCode().Should().Be(b.GetHashCode());
     }
 }
-
-file sealed class Priority(int value, string displayName) : Enumeration<int>(value, displayName)
-{
-    public static Priority Low { get; } = new(1, "Low");
-    public static Priority Medium { get; } = new(2, "Medium");
-    public static Priority High { get; } = new(3, "High");
-}
-
-file sealed class Urgency(int value, string displayName) : Enumeration<int>(value, displayName);
