@@ -33,6 +33,13 @@ jobs:
           arguments: --no-incremental --configuration Release --no-restore $(BuildParameters)
 
       - task: DotNetCoreCLI@2
+        displayName: 'Run tests'
+        inputs:
+          command: 'test'
+          projects: '**/*.Tests.csproj'
+          arguments: '--no-build --no-restore --configuration Release'
+
+      - task: DotNetCoreCLI@2
         displayName: Pack the NuGet packages
         inputs:
           command: 'pack'

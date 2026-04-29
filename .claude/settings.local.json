@@ -4,7 +4,11 @@
       "Bash(grep -E \"\\\\.\\(csproj|xml\\)$\")",
       "Bash(grep -E \"\\\\.\\(md|txt|config|json|yml|yaml\\)$\")",
       "Bash(git mv *)",
-      "Bash(dotnet build *)"
+      "Bash(dotnet build *)",
+      "Bash(rm \"C:/Users/Nizzo/Desktop/Biblioteke/.NET/DDD/.claude/commands/unit-test.md\")",
+      "Bash(rmdir \"C:/Users/Nizzo/Desktop/Biblioteke/.NET/DDD/.claude/commands\")",
+      "Bash(dotnet restore *)",
+      "Bash(dotnet test *)"
     ]
   }
 }

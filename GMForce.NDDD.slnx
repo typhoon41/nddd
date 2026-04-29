@@ -15,4 +15,5 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="GMForce.NDDD/GMForce.NDDD.csproj" />
+  <Project Path="GMForce.NDDD.Tests/GMForce.NDDD.Tests.csproj" />
 </Solution>

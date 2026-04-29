@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsTestProject>true</IsTestProject>
+        <IsPackable>false</IsPackable>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <!-- camelCase test method names are intentional; fixtures are instantiated by NUnit via reflection;
+             file-local types are valid in lambdas; null-operator tests are meaningful despite static analysis -->
+        <NoWarn>$(NoWarn);IDE1006;IDE0036;CA1812;CA1806;CA1508</NoWarn>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="FakeItEasy" />
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="nunit" />
+        <PackageReference Include="NUnit3TestAdapter" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\GMForce.NDDD\GMForce.NDDD.csproj" />
+    </ItemGroup>
+</Project>
