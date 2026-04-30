@@ -5,7 +5,7 @@ internal sealed class ValueObjectFixture
     [TestCaseSource(typeof(ValueObjectSource), nameof(ValueObjectSource.EqualityCases))]
     public void EqualityOperatorReflectsAtomicValues(ValueObject left, ValueObject right, bool expected)
     {
-        (left == right).Should().Be(expected);
+        (left == right).ShouldBe(expected);
     }
 
     [Test]
@@ -14,7 +14,7 @@ internal sealed class ValueObjectFixture
         var a = new Money(Amounts.Hundred, Currencies.Eur);
         var b = new Money(Amounts.Hundred, Currencies.Usd);
 
-        (a != b).Should().BeTrue();
+        (a != b).ShouldBeTrue();
     }
 
     [Test]
@@ -23,7 +23,7 @@ internal sealed class ValueObjectFixture
         ValueObject? a = null;
         ValueObject? b = null;
 
-        (a! == b!).Should().BeTrue();
+        (a! == b!).ShouldBeTrue();
     }
 
     [Test]
@@ -31,6 +31,15 @@ internal sealed class ValueObjectFixture
     {
         ValueObject value = new Money(Amounts.Hundred, Currencies.Eur);
 
-        (value == null!).Should().BeFalse();
+        (value == null!).ShouldBeFalse();
+    }
+
+    [Test]
+    public void HashCodeMatchesForEqualValueObjects()
+    {
+        var a = new Money(Amounts.Hundred, Currencies.Eur);
+        var b = new Money(Amounts.Hundred, Currencies.Eur);
+
+        a.GetHashCode().ShouldBe(b.GetHashCode());
     }
 }

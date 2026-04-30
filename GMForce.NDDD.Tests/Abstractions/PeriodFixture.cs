@@ -7,7 +7,7 @@ internal sealed class PeriodFixture
     {
         Action act = () => new Period(Dates.Later, Dates.Earlier);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Should.Throw<ArgumentOutOfRangeException>(act);
     }
 
     [Test]
@@ -15,8 +15,8 @@ internal sealed class PeriodFixture
     {
         var period = new Period(Dates.Earlier, Dates.Later);
 
-        period.StartDate.Should().Be(Dates.Earlier);
-        period.EndDate.Should().Be(Dates.Later);
+        period.StartDate.ShouldBe(Dates.Earlier);
+        period.EndDate.ShouldBe(Dates.Later);
     }
 
     [TestCaseSource(typeof(PeriodSource), nameof(PeriodSource.ContainsCases))]
@@ -24,7 +24,7 @@ internal sealed class PeriodFixture
     {
         var period = new Period(Dates.Earlier, Dates.Later);
 
-        period.Contains(date).Should().Be(expected);
+        period.Contains(date).ShouldBe(expected);
     }
 
     [TestCaseSource(typeof(PeriodSource), nameof(PeriodSource.InFutureCases))]
@@ -32,7 +32,7 @@ internal sealed class PeriodFixture
     {
         var period = new Period(Dates.Earlier, Dates.Later);
 
-        period.InFuture(FakeTimeAt(now)).Should().Be(expected);
+        period.InFuture(FakeTimeAt(now)).ShouldBe(expected);
     }
 
     [TestCaseSource(typeof(PeriodSource), nameof(PeriodSource.InPastCases))]
@@ -40,7 +40,7 @@ internal sealed class PeriodFixture
     {
         var period = new Period(Dates.Earlier, Dates.Later);
 
-        period.InPast(FakeTimeAt(now)).Should().Be(expected);
+        period.InPast(FakeTimeAt(now)).ShouldBe(expected);
     }
 
     [TestCaseSource(typeof(PeriodSource), nameof(PeriodSource.InPresentCases))]
@@ -48,7 +48,7 @@ internal sealed class PeriodFixture
     {
         var period = new Period(Dates.Earlier, Dates.Later);
 
-        period.InPresent(FakeTimeAt(now)).Should().Be(expected);
+        period.InPresent(FakeTimeAt(now)).ShouldBe(expected);
     }
 
     [Test]
@@ -56,7 +56,7 @@ internal sealed class PeriodFixture
     {
         var period = new Period(Dates.KnownStart, Dates.KnownEnd);
 
-        period.InMinutes.Should().Be(Dates.KnownDurationMinutes);
+        period.InMinutes.ShouldBe(Dates.KnownDurationMinutes);
     }
 
     [Test]
@@ -64,7 +64,7 @@ internal sealed class PeriodFixture
     {
         var period = new Period(Dates.KnownStart, Dates.KnownEnd);
 
-        period.ToString().Should().Be($"[{period.StartDate:d}, {period.EndDate:d}]");
+        period.ToString().ShouldBe($"[{period.StartDate:d}, {period.EndDate:d}]");
     }
 
     private static TimeProvider FakeTimeAt(DateTimeOffset at)

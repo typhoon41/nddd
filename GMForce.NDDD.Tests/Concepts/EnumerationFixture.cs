@@ -5,13 +5,13 @@ internal sealed class EnumerationFixture
     [Test]
     public void ToStringReturnsDisplayName()
     {
-        Priority.Medium.ToString().Should().Be("Medium");
+        Priority.Medium.ToString().ShouldBe("Medium");
     }
 
     [TestCaseSource(typeof(EnumerationSource), nameof(EnumerationSource.CompareToOrdering))]
     public void CompareToReflectsValueOrdering(Enumeration<int> left, Enumeration<int> right, int expectedSign)
     {
-        Math.Sign(left.CompareTo(right)).Should().Be(expectedSign);
+        Math.Sign(left.CompareTo(right)).ShouldBe(expectedSign);
     }
 
     [Test]
@@ -19,13 +19,13 @@ internal sealed class EnumerationFixture
     {
         Action act = () => Priority.Low.CompareTo(null);
 
-        act.Should().Throw<ArgumentNullException>();
+        Should.Throw<ArgumentNullException>(act);
     }
 
     [TestCaseSource(typeof(EnumerationSource), nameof(EnumerationSource.EqualityCases))]
     public void EqualityOperatorReflectsTypeAndValue(Enumeration<int> left, Enumeration<int> right, bool expected)
     {
-        (left == right).Should().Be(expected);
+        (left == right).ShouldBe(expected);
     }
 
     [Test]
@@ -34,13 +34,13 @@ internal sealed class EnumerationFixture
         var priority = new Priority(2, "Medium");
         var urgency = new Urgency(2, "Medium");
 
-        priority.Equals(urgency).Should().BeFalse();
+        priority.Equals(urgency).ShouldBeFalse();
     }
 
     [Test]
     public void InequalityOperatorIsNegationOfEquality()
     {
-        (Priority.Low != Priority.High).Should().BeTrue();
+        (Priority.Low != Priority.High).ShouldBeTrue();
     }
 
     [Test]
@@ -49,6 +49,6 @@ internal sealed class EnumerationFixture
         var a = new Priority(2, "Medium");
         var b = new Priority(2, "Medium");
 
-        a.GetHashCode().Should().Be(b.GetHashCode());
+        a.GetHashCode().ShouldBe(b.GetHashCode());
     }
 }

@@ -7,7 +7,7 @@ internal sealed class EntityDtoFixture
     {
         var dto = new ConcreteEntityDto();
 
-        dto.DomainEvents.Should().BeEmpty();
+        dto.DomainEvents.ShouldBeEmpty();
     }
 
     [Test]
@@ -18,7 +18,7 @@ internal sealed class EntityDtoFixture
 
         dto.AddDomainEvent(@event);
 
-        dto.DomainEvents.Should().ContainSingle().Which.Should().Be(@event);
+        dto.DomainEvents.ShouldHaveSingleItem().ShouldBe(@event);
     }
 
     [Test]
@@ -31,7 +31,7 @@ internal sealed class EntityDtoFixture
         dto.AddDomainEvent(first);
         dto.AddDomainEvent(second);
 
-        dto.DomainEvents.Should().HaveCount(2).And.ContainInOrder(first, second);
+        dto.DomainEvents.ShouldBe(new[] { first, second });
     }
 
     [Test]
@@ -42,8 +42,8 @@ internal sealed class EntityDtoFixture
 
         dto.ClearDomainEvents();
 
-        dto.DomainEvents.Should().BeEmpty();
+        dto.DomainEvents.ShouldBeEmpty();
     }
 }
 
-file sealed record ConcreteEntityDto : EntityDto;
+file sealed class ConcreteEntityDto : EntityDto;

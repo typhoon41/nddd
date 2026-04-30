@@ -1,5 +1,5 @@
 global using FakeItEasy;
-global using FluentAssertions;
+global using Shouldly;
 global using GMForce.NDDD.Abstractions;
 global using GMForce.NDDD.Concepts;
 global using GMForce.NDDD.Contracts;

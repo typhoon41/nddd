@@ -1,6 +1,6 @@
 ---
 name: unit-test
-description: Write NUnit unit tests following project conventions — AAA, FluentAssertions, FakeItEasy, Verify.NUnit snapshots, parameterized tests, builders, and codebooks. Use when asked to write or add tests for any class or feature.
+description: Write NUnit unit tests following project conventions — AAA, Shouldly, FakeItEasy, Verify.NUnit snapshots, parameterized tests, builders, and codebooks. Use when asked to write or add tests for any class or feature.
 ---
 
 Write NUnit unit tests for: $ARGUMENTS
@@ -50,7 +50,7 @@ public void ReturnsSuccessForValidOrder()
 
     var result = _sut.Process(order);
 
-    result.IsSuccess.Should().BeTrue();
+    result.IsSuccess.ShouldBeTrue();
 }
 ```
 
@@ -64,7 +64,7 @@ public void ThrowsWhenAmountIsNegative()
 
     Action act = () => account.Deposit(Amounts.Negative);
 
-    act.Should().Throw<ArgumentException>();
+    Should.Throw<ArgumentException>(act);
 }
 ```
 
@@ -72,16 +72,30 @@ public void ThrowsWhenAmountIsNegative()
 
 ## Libraries
 
-### Assertions — FluentAssertions only
+### Assertions — Shouldly only
 
-Never use `Assert.*`. Every assertion goes through FluentAssertions:
+Never use `Assert.*`. Every assertion goes through Shouldly:
 
 ```csharp
-result.Should().Be(42);
-result.Should().BeNull();
-collection.Should().ContainSingle(x => x.Id == Ids.Existing);
-act.Should().Throw<InvalidOperationException>().WithMessage("*insufficient*");
+result.ShouldBe(42);
+result.ShouldBeNull();
+collection.ShouldContain(x => x.Id == Ids.Existing);
+Should.Throw<InvalidOperationException>(act).Message.ShouldContain("insufficient");
 ```
+
+Common Shouldly methods:
+
+| FluentAssertions (old) | Shouldly |
+|---|---|
+| `x.Should().Be(y)` | `x.ShouldBe(y)` |
+| `x.Should().BeTrue()` | `x.ShouldBeTrue()` |
+| `x.Should().BeFalse()` | `x.ShouldBeFalse()` |
+| `x.Should().BeNull()` | `x.ShouldBeNull()` |
+| `x.Should().BeEmpty()` | `x.ShouldBeEmpty()` |
+| `act.Should().Throw<T>()` | `Should.Throw<T>(act)` |
+| `col.Should().ContainSingle().Which.Should().Be(x)` | `col.ShouldHaveSingleItem().ShouldBe(x)` |
+| `col.Should().HaveCount(n)` | `col.Count.ShouldBe(n)` |
+| `col.Should().ContainInOrder(a, b)` | `col.ShouldBe(new[] { a, b })` |
 
 ### Mocks — FakeItEasy
 
@@ -119,7 +133,7 @@ A.CallTo(() => _repository.SaveAsync(A<Order>.That.Matches(o => o.Id == Ids.Exis
 
 ### Snapshots — Verify.NUnit
 
-Use **only** for integration tests and output too complex to assert property-by-property. Do not use Verify for plain unit tests — use FluentAssertions there.
+Use **only** for integration tests and output too complex to assert property-by-property. Do not use Verify for plain unit tests — use Shouldly there.
 
 ```csharp
 [Test]
@@ -160,7 +174,7 @@ internal sealed class OrdersEndpointFixture : WebApplicationFactory<Program>
     {
         var response = await _client.GetAsync($"/orders/{Ids.Existing}");
 
-        response.Should().Be200Ok();
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         await Verify(await response.Content.ReadAsStringAsync());
     }
 
@@ -174,7 +188,7 @@ internal sealed class OrdersEndpointFixture : WebApplicationFactory<Program>
 }
 ```
 
-Assert HTTP status with FluentAssertions; assert response body with Verify.
+Assert HTTP status with Shouldly; assert response body with Verify.
 
 ---
 
@@ -231,7 +245,7 @@ public void ThrowsForOutOfRangeAmount(decimal amount)
 
     Action act = () => account.Deposit(amount);
 
-    act.Should().Throw<ArgumentException>();
+    Should.Throw<ArgumentException>(act);
 }
 ```
 
@@ -245,7 +259,7 @@ public void RejectsInvalidOrder(Order order)
 {
     var result = _sut.Process(order);
 
-    result.IsSuccess.Should().BeFalse();
+    result.IsSuccess.ShouldBeFalse();
 }
 ```
 
@@ -308,7 +322,7 @@ Shared pre-built domain objects reused across multiple fixture classes go in a `
 - Do not use camelCase for test method names — PascalCase only.
 - Do not add `[TestFixture]` to classes whose names end with `Fixture`.
 - Do not write `// Arrange`, `// Act`, or `// Assert` comments.
-- Do not use `Assert.That` or any other `Assert.*` — FluentAssertions only.
+- Do not use `Assert.*` or any other assertion library — Shouldly only.
 - Do not leave empty catch blocks.
 - Do not write separate `[Test]` methods for cases that differ only in input values — use `[TestCase]` or `[TestCaseSource]`. Always check before writing any new `[Test]`.
 - Do not create nested classes for builders, codebooks, or source data.
@@ -321,7 +335,7 @@ Shared pre-built domain objects reused across multiple fixture classes go in a `
 
 - `[SetUp]` only for state that **every** test in the class needs; use a private factory method for state needed by only some tests.
 - `_sut` is the consistent name for the system under test.
-- One assertion concept per test — multiple `.Should()` calls are fine when they verify the same logical outcome.
+- One assertion concept per test — multiple `ShouldBe` / `Should*` calls are fine when they verify the same logical outcome.
 - Never assert on implementation details or internal state.
 - Never use `Thread.Sleep` or `DateTime.Now` — inject `TimeProvider` or a fake.
 - No logic (loops, conditionals) inside test methods; keep it in builders or source methods.
@@ -334,7 +348,7 @@ Shared pre-built domain objects reused across multiple fixture classes go in a `
 - [ ] Every test follows AAA separated by blank lines — no AAA comments
 - [ ] Method names are descriptive PascalCase — no underscores, no camelCase, no prefixes
 - [ ] Test class is `internal sealed`, no `[TestFixture]`, `Fixture` suffix
-- [ ] All assertions use FluentAssertions — no `Assert.*`
+- [ ] All assertions use Shouldly — no `Assert.*`, no other assertion library
 - [ ] Fakes created with FakeItEasy (`A.Fake<T>()`) in `[SetUp]`, fields initialized with `= null!`
 - [ ] Complex output verified with Verify.NUnit; `.verified.txt` committed
 - [ ] Integration tests override `Dispose(bool)` for cleanup

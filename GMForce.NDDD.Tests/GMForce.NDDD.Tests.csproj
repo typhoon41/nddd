@@ -3,12 +3,12 @@
         <IsTestProject>true</IsTestProject>
         <IsPackable>false</IsPackable>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
-        <!-- fixtures are instantiated by NUnit via reflection; null-operator tests are meaningful despite static analysis -->
+        <!-- fixtures are instantiated by NUnit via reflection; Should.Throw return is intentionally unused; null-operator tests suppress CA1508 -->
         <NoWarn>$(NoWarn);IDE0036;CA1812;CA1806;CA1508</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="FakeItEasy" />
-        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="Shouldly" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="nunit" />
         <PackageReference Include="NUnit3TestAdapter" />

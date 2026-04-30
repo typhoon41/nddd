@@ -8,13 +8,13 @@ internal sealed class EntityFixture
         var a = new OrderEntity(EntityIds.First);
         var b = new OrderEntity(EntityIds.First);
 
-        a.Equals(b).Should().BeTrue();
+        a.Equals(b).ShouldBeTrue();
     }
 
     [TestCaseSource(typeof(EntitySource), nameof(EntitySource.UnequalCases))]
     public void NotEqualWhenTypeOrIdDiffers(Entity<int> entity, object? other)
     {
-        entity.Equals(other).Should().BeFalse();
+        entity.Equals(other).ShouldBeFalse();
     }
 
     [Test]
@@ -23,6 +23,6 @@ internal sealed class EntityFixture
         var a = new OrderEntity(EntityIds.First);
         var b = new OrderEntity(EntityIds.First);
 
-        a.GetHashCode().Should().Be(b.GetHashCode());
+        a.GetHashCode().ShouldBe(b.GetHashCode());
     }
 }
