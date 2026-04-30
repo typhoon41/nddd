@@ -46,4 +46,4 @@ internal sealed class EntityDtoFixture
     }
 }
 
-file sealed class ConcreteEntityDto : EntityDto;
+file sealed record ConcreteEntityDto : EntityDto;
