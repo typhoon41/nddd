@@ -35,7 +35,7 @@ jobs:
       - task: CmdLine@2
         displayName: 'Run tests'
         inputs:
-          script: 'dotnet test "$(Build.SourcesDirectory)/GMForce.NDDD.Tests/GMForce.NDDD.Tests.csproj" --no-build --no-restore --configuration Release --logger trx --results-directory "$(Agent.TempDirectory)"'
+          script: 'dotnet test "$(Build.SourcesDirectory)/GMForce.NDDD.Tests/GMForce.NDDD.Tests.csproj" --no-restore --configuration Release --logger trx --results-directory "$(Agent.TempDirectory)"'
 
       - task: DotNetCoreCLI@2
         displayName: Pack the NuGet packages
