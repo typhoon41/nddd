@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  applicationVersion: 0.1.1
+  applicationVersion: 0.1.2
   dotnetVersion: 10.0.x
 
 name: $(applicationVersion).$(Rev:r)
@@ -61,3 +61,18 @@ stages:
             displayName: 'Push NuGet Package'
             inputs:
               script: 'dotnet nuget push "$(System.ArtifactsDirectory)/NDDD-$(Build.BuildNumber)/*.nupkg" -k $(NugetApiKey) -s "https://api.nuget.org/v3/index.json" --skip-duplicate --no-symbols'
+
+  - job: git_tag
+    displayName: Create Git tag
+    dependsOn: Publish
+    steps:
+    - checkout: self
+      displayName: 'Checkout current repo'
+      persistCredentials: true
+    - task: Bash@3
+      displayName: Create Git tag
+      inputs:
+        targetType: 'inline'
+        script: |
+          git tag v$(Build.BuildNumber)
+          git push origin v$(Build.BuildNumber)
